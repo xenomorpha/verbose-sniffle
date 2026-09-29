@@ -11,12 +11,12 @@ const pool = new Pool({
   port: 5432,
 });
 
-app.get('/db-test', async (req, res) => {
+app.get('/api/products', async (req, res) => {
   try {
-    const result = await pool.query('SELECT NOW() AS time');
-    res.json({ ok: true, time: result.rows[0].time });
+    const result = await pool.query('SELECT * FROM products ORDER BY id');
+    res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 const PORT = 3000;
