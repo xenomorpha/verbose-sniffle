@@ -11,6 +11,37 @@
 </head>
 <script>
   const API_URL = 'http://localhost:3000/api/products';
+  const CART_KEY = 'cart';
+
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+
+function cartCount() {
+  return getCart().reduce((sum, item) => sum + item.qty, 0);
+}
+
+// #32: header counter
+function updateCartCounter() {
+  document.querySelector('.cart').textContent = 'Warenkorb (' + cartCount() + ')';
+}
+
+function addToCart(product) {
+  const cart = getCart();
+  const existing = cart.find(item => item.id === product.id);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: Number(product.price), qty: 1 });
+  }
+  saveCart(cart);
+  updateCartCounter();   // updates immediately, no reload
+}
 
   async function loadProducts2() {
     const container = document.getElementById('products');
@@ -38,15 +69,21 @@
         const price = document.createElement('strong');
         price.textContent = 'CHF ' + Number(p.price).toFixed(2);
 
-        card.append(img, name, desc, price);
+        const btn = document.createElement('button');
+        btn.textContent = 'In den Warenkorb';
+        btn.className = 'add-to-cart';
+        btn.addEventListener('click', () => addToCart(p));
+        card.append(img, name, desc, price, btn);
         container.append(card);
       }
     } catch (err) {
       container.textContent = 'Could not load products: ' + err.message;
     }
+    
   }
 
 document.addEventListener('DOMContentLoaded', loadProducts2);
+updateCartCounter();
 </script>
 <body>
 

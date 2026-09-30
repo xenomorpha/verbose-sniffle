@@ -77,3 +77,10 @@ body {
   gap: 16px;
 }.product { border: 1px solid #ddd; padding: 12px; border-radius: 8px; }
 .product img { max-width: 100%; }
+.add-to-cart {
+  margin-top: 12px; width: 100%;
+  font-family: inherit; font-weight: 600;
+  padding: 10px; border: none; border-radius: 999px;
+  background: var(--text); color: white; cursor: pointer;
+}
+.add-to-cart:hover { background: var(--accent); }
