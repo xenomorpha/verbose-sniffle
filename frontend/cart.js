@@ -78,7 +78,7 @@ function getCartTotal() {
 
 // Format a number as a German price: 89 -> "89,00 €"
 function formatPrice(value) {
-  return Number(value).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+  return Number(value).toLocaleString("de-CH", { style: "currency", currency: "CHF" });
 }
 
 // Update the counter in the header (element with id="cart-counter")
