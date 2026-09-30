@@ -9,6 +9,45 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+<script>
+  const API_URL = 'http://localhost:3000/api/products';
+
+  async function loadProducts2() {
+    const container = document.getElementById('products');
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const products = await res.json();
+
+      container.innerHTML = '';
+      for (const p of products) {
+        const card = document.createElement('div');
+        card.className = 'product';
+
+        const img = document.createElement('img');
+        img.src = p.image_url;
+        img.alt = p.name;
+        img.onerror = () => img.remove();   // hide broken images for now
+
+        const name = document.createElement('h3');
+        name.textContent = p.name;
+
+        const desc = document.createElement('p');
+        desc.textContent = p.description;
+
+        const price = document.createElement('strong');
+        price.textContent = 'CHF ' + Number(p.price).toFixed(2);
+
+        card.append(img, name, desc, price);
+        container.append(card);
+      }
+    } catch (err) {
+      container.textContent = 'Could not load products: ' + err.message;
+    }
+  }
+
+document.addEventListener('DOMContentLoaded', loadProducts2);
+</script>
 <body>
 
   <header class="header">
@@ -19,8 +58,11 @@
   <main class="hero">
     <p class="hero-label">Neu im Shop</p>
     <h1>Design, das bleibt.</h1>
-    <p class="hero-text">Unser Katalogue ist bald online. Schau bald wieder vorbei.</p>
+    <p class="hero-text">Entdecke unsere neue Kollektion</p>
   </main>
-
+  <section class="products-section">
+  <h1>Products</h1>
+  <div id="products">Loading...</div>
+</section>
 </body>
 </html>

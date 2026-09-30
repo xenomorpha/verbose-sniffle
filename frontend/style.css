@@ -48,10 +48,11 @@ body {
 }
 
 .hero {
-  padding: 120px 48px;
+  padding: 80px 48px 32px;   /* top | left+right | bottom */
   max-width: 900px;
 }
 
+.products-section { padding: 0 48px 80px; }
 .hero-label {
   color: var(--accent);
   font-weight: 600;
@@ -63,10 +64,16 @@ body {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.03em;
-  margin-bottom: 24px;
+  margin-bottom: 2px;
 }
 
 .hero-text {
   font-size: 20px;
   color: var(--muted);
 }
+#products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}.product { border: 1px solid #ddd; padding: 12px; border-radius: 8px; }
+.product img { max-width: 100%; }
