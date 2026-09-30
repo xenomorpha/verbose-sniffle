@@ -168,3 +168,21 @@ body {
 .cart-empty a {
   color: var(--text);
 }
+
+.checkout-button {
+  display: block;
+  margin-top: 32px;
+  margin-left: auto;
+  width: fit-content;
+  padding: 16px 40px;
+  border-radius: 999px;
+  background: var(--text);
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.checkout-button:hover {
+  background: var(--accent);
+}
