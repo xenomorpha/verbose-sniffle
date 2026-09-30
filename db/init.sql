@@ -26,3 +26,20 @@ INSERT INTO products (name, category, description, price, image_url, stock) VALU
   ('Wolljacke Camel',         'Jacken',           'Kurzer Mantel aus Wollmischung, cleaner Schnitt, verdeckte Knopfleiste.',                     189.00, '/images/wolljacke.jpg',        6),
   ('Canvas Tote Natural',     'Accessoires',      'Große Tasche aus festem Baumwoll-Canvas mit Innenfach.',                                       29.00,  '/images/tote-bag.jpg',        50),
   ('Rippstrick Beanie Stone', 'Accessoires',      'Weiche Mütze in Rippstrick, umschlagbarer Rand, unisex.',                                      24.90,  '/images/beanie.jpg',          35);
+
+
+  CREATE TABLE IF NOT EXISTS orders (
+  id             SERIAL PRIMARY KEY,
+  customer_name  VARCHAR(100) NOT NULL,
+  customer_email VARCHAR(255) NOT NULL,
+  total          NUMERIC(10,2) NOT NULL,
+  created_at     TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id          SERIAL PRIMARY KEY,
+  order_id    INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id  INTEGER NOT NULL REFERENCES products(id),
+  quantity    INTEGER NOT NULL CHECK (quantity > 0),
+  unit_price  NUMERIC(10,2) NOT NULL
+);
