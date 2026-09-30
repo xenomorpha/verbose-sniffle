@@ -21,7 +21,7 @@ form.addEventListener('submit', async (e) => {
     const res = await fetch(ORDERS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, items: cart.map(i => ({ id: i.id, qty: i.qty })) })
+      body: JSON.stringify({ name, email, items: cart.map(i => ({ id: i.id, qty: i.quantity })) })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
