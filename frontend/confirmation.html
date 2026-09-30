@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Danke</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header"><a class="logo" href="index.html">webshop.</a></header>
+  <main class="products-section">
+    <h1>Danke für deine Bestellung!</h1>
+    <p id="msg"></p>
+    <p><a href="index.html">Weiter einkaufen</a></p>
+  </main>
+  <script>
+    const id = new URLSearchParams(location.search).get('order');
+    document.getElementById('msg').textContent = id ? 'Deine Bestellnummer: #' + id : '';
+  </script>
+</body>
+</html>

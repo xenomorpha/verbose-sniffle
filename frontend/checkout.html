@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kasse</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header"><a class="logo" href="index.html">webshop.</a></header>
+  <main class="products-section">
+    <h1>Kasse</h1>
+    <form id="checkout-form" novalidate>
+      <p><label>Name<br><input id="name" type="text" required></label></p>
+      <p><label>E-Mail<br><input id="email" type="email" required></label></p>
+      <p id="error" role="alert" style="color:#b91c1c"></p>
+      <button type="submit" class="add-to-cart">Bestellung abschicken</button>
+    </form>
+  </main>
+  <script src="checkout.js"></script>
+</body>
+</html>
