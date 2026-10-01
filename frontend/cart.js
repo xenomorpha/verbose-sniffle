@@ -1,18 +1,21 @@
 // ============================================
-// cart.js — shared cart functions
-// Used by: app.js (US2, add to cart) and cart-page.js (US3, cart page)
+// cart.js — shared functions for the whole shop
+// Load this file BEFORE any other script on every page.
 //
-// The cart is stored in the browser (localStorage) under the key "cart".
-// Format: a list of items like
-// { id: 3, name: "Heavy Hoodie Graphite", price: 89, image_url: "/images/hoodie.jpg", quantity: 2 }
+// Cart is stored in localStorage under "cart":
+// [{ id, name, price, image_url, quantity }, ...]
 // ============================================
 
 const CART_KEY = "cart";
 
-// Read the cart from localStorage (empty list if nothing is saved yet)
+// Read the cart (empty list if nothing is saved yet)
 function getCart() {
-  const saved = localStorage.getItem(CART_KEY);
-  return saved ? JSON.parse(saved) : [];
+  try {
+    const saved = localStorage.getItem(CART_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
 }
 
 // Save the cart and refresh the counter in the header
@@ -21,7 +24,7 @@ function saveCart(cart) {
   updateCartCounter();
 }
 
-// US2: add a product from the API (or +1 if it is already in the cart)
+// Add a product from the API (or +1 if it is already in the cart)
 function addToCart(product) {
   const cart = getCart();
   const existing = cart.find((item) => item.id === product.id);
@@ -41,27 +44,27 @@ function addToCart(product) {
   saveCart(cart);
 }
 
-// US3: change quantity by +1 or -1 (removes the item when it reaches 0)
+// Change quantity by +1 or -1 (removes the item when it reaches 0)
 function changeQuantity(id, change) {
   let cart = getCart();
-  const item = cart.find((item) => item.id === id);
+  const item = cart.find((entry) => entry.id === id);
   if (!item) return;
 
   item.quantity += change;
   if (item.quantity <= 0) {
-    cart = cart.filter((item) => item.id !== id);
+    cart = cart.filter((entry) => entry.id !== id);
   }
 
   saveCart(cart);
 }
 
-// US3: remove an item completely
+// Remove an item completely
 function removeFromCart(id) {
   const cart = getCart().filter((item) => item.id !== id);
   saveCart(cart);
 }
 
-// Empty the cart (US4: after the order is placed)
+// Empty the cart (after an order is placed)
 function clearCart() {
   saveCart([]);
 }
@@ -76,7 +79,7 @@ function getCartTotal() {
   return getCart().reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
-// Format a number as a German price: 89 -> "89,00 €"
+// Format a number as a Swiss price: 89 -> "CHF 89.00"
 function formatPrice(value) {
   return Number(value).toLocaleString("de-CH", { style: "currency", currency: "CHF" });
 }
@@ -86,6 +89,30 @@ function updateCartCounter() {
   const counter = document.getElementById("cart-counter");
   if (counter) {
     counter.textContent = getCartCount();
+  }
+}
+
+// ============================================
+// My orders: remembered in this browser after checkout (used by profile page)
+// Stored in localStorage under "myOrders": [{ orderId, email }, ...]
+// ============================================
+const MY_ORDERS_KEY = "myOrders";
+
+function getMyOrders() {
+  try {
+    const saved = localStorage.getItem(MY_ORDERS_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMyOrder(orderId, email) {
+  const orders = getMyOrders();
+  const alreadySaved = orders.some((o) => o.orderId === orderId);
+  if (!alreadySaved) {
+    orders.unshift({ orderId, email });
+    localStorage.setItem(MY_ORDERS_KEY, JSON.stringify(orders));
   }
 }
 
