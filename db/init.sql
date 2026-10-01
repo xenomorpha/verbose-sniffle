@@ -71,3 +71,52 @@ CREATE TABLE IF NOT EXISTS order_items (
   quantity    INTEGER NOT NULL CHECK (quantity > 0),
   unit_price  NUMERIC(10,2) NOT NULL
 );
+-- ============================================
+-- Users (customers): created automatically at checkout, one per e-mail
+-- ============================================
+CREATE TABLE users (
+  id         SERIAL PRIMARY KEY,
+  name       VARCHAR(100) NOT NULL,
+  email      VARCHAR(255) NOT NULL UNIQUE,
+  created_at TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
+-- ============================================
+-- Orders: each order belongs to one user and has a status
+-- ============================================
+CREATE TABLE orders (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER       NOT NULL REFERENCES users(id),
+  status     VARCHAR(20)   NOT NULL DEFAULT 'processing'
+             CHECK (status IN ('processing', 'shipped', 'delivered')),
+  total      NUMERIC(10,2) NOT NULL CHECK (total >= 0),
+  created_at TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+-- ============================================
+-- Order items: products inside an order
+-- ============================================
+CREATE TABLE order_items (
+  id         SERIAL PRIMARY KEY,
+  order_id   INTEGER       NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id INTEGER       NOT NULL REFERENCES products(id),
+  quantity   INTEGER       NOT NULL CHECK (quantity > 0),
+  unit_price NUMERIC(10,2) NOT NULL
+);
+
+-- ============================================
+-- Demo data: two customers with orders in different states
+-- ============================================
+INSERT INTO users (name, email) VALUES
+  ('Anna Muster',  'anna@example.ch'),
+  ('Luca Beispiel', 'luca@example.ch');
+
+INSERT INTO orders (user_id, status, total) VALUES
+  (1, 'delivered',  178.00),
+  (1, 'shipped',     24.90),
+  (2, 'processing', 149.00);
+
+INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES
+  (1, 7,  2, 89.00),
+  (2, 26, 1, 24.90),
+  (3, 19, 1, 149.00);

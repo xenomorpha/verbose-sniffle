@@ -94,3 +94,111 @@ res.send("Hello from the webshop backend!");
 app.listen(PORT, () => {
 console.log(`Backend running on port ${PORT}`);
 });
+const ORDER_STATUSES = ['processing', 'shipped', 'delivered'];
+
+// US4 + US8: place an order (creates the user if the e-mail is new)
+app.post('/api/orders', async (req, res) => {
+  const { name, email, items } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: 'name and email are required' });
+  }
+  if (!Array.isArray(items) || items.length === 0 ||
+      !items.every(i => Number.isInteger(i.id) && Number.isInteger(i.qty) && i.qty > 0)) {
+    return res.status(400).json({ error: 'items must be {id, qty} with qty > 0' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // 1. Find the user by e-mail or create a new one
+    const userResult = await client.query(
+      `INSERT INTO users (name, email) VALUES ($1, $2)
+       ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+       RETURNING id`,
+      [name, email.toLowerCase()]
+    );
+    const userId = userResult.rows[0].id;
+
+    // 2. Take prices from the database, never from the browser
+    const ids = items.map(i => i.id);
+    const productResult = await client.query(
+      'SELECT id, price FROM products WHERE id = ANY($1)', [ids]
+    );
+    const priceById = new Map(productResult.rows.map(p => [p.id, Number(p.price)]));
+    if (priceById.size !== new Set(ids).size) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Unknown product in order' });
+    }
+    const total = items.reduce((sum, i) => sum + priceById.get(i.id) * i.qty, 0);
+
+    // 3. Create the order (status is 'processing' by default)
+    const orderResult = await client.query(
+      'INSERT INTO orders (user_id, total) VALUES ($1, $2) RETURNING id',
+      [userId, total]
+    );
+    const orderId = orderResult.rows[0].id;
+
+    // 4. Save the items
+    for (const item of items) {
+      await client.query(
+        'INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES ($1, $2, $3, $4)',
+        [orderId, item.id, item.qty, priceById.get(item.id)]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({ orderId, status: 'processing' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
+// US9: order status — needs order number AND e-mail, so strangers can't look up orders
+app.get('/api/orders/:id', async (req, res) => {
+  const email = (req.query.email || '').toLowerCase();
+  try {
+    const orderResult = await pool.query(
+      `SELECT o.id, o.status, o.total, o.created_at, u.name
+       FROM orders o JOIN users u ON u.id = o.user_id
+       WHERE o.id = $1 AND u.email = $2`,
+      [req.params.id, email]
+    );
+    if (orderResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    const itemsResult = await pool.query(
+      `SELECT p.name, oi.quantity, oi.unit_price
+       FROM order_items oi JOIN products p ON p.id = oi.product_id
+       WHERE oi.order_id = $1`,
+      [req.params.id]
+    );
+    res.json({ ...orderResult.rows[0], items: itemsResult.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// US10: change the status (for the shop owner)
+app.patch('/api/orders/:id/status', async (req, res) => {
+  const { status } = req.body;
+  if (!ORDER_STATUSES.includes(status)) {
+    return res.status(400).json({ error: 'status must be one of: ' + ORDER_STATUSES.join(', ') });
+  }
+  try {
+    const result = await pool.query(
+      'UPDATE orders SET status = $1 WHERE id = $2 RETURNING id, status',
+      [status, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
