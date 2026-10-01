@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Profil – webshop göffel.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <a href="/" class="logo">webshop göffel.</a>
+    <nav class="header-nav">
+      <a href="profile.html" class="profile-link">Profil</a>
+      <a href="cart.html" class="cart">Warenkorb (<span id="cart-counter">0</span>)</a>
+    </nav>
+  </header>
+
+  <main class="profile-page">
+    <h1>Mein Profil</h1>
+    <p class="profile-intro">Deine Bestellungen und ihr aktueller Status.</p>
+
+    <div id="my-orders"></div>
+
+    <section class="order-lookup">
+      <h2>Bestellung suchen</h2>
+      <form id="lookup-form">
+        <input type="number" id="lookup-id" placeholder="Bestellnummer" required>
+        <input type="email" id="lookup-email" placeholder="E-Mail" required>
+        <button type="submit">Suchen</button>
+      </form>
+      <p id="lookup-error" class="lookup-error"></p>
+    </section>
+  </main>
+
+  <script src="cart.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

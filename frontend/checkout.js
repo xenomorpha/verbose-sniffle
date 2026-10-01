@@ -25,7 +25,7 @@ form.addEventListener('submit', async (e) => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
-
+saveMyOrder(data.orderId, email.toLowerCase());
     localStorage.removeItem('cart');   // only after the server confirmed
     window.location.href = 'confirmation.html?order=' + data.orderId;
   } catch (err) {
