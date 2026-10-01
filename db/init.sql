@@ -55,22 +55,6 @@ INSERT INTO products (name, category, description, price, image_url, stock) VALU
   ('Wollschal Grau',             'Accessoires',      'Weicher Schal aus Lammwolle, 180 cm lang, mit Fransenkante.',                                   45.00,  '/images/schal.jpg',           20),
   ('Ledergürtel Braun',          'Accessoires',      'Gürtel aus pflanzlich gegerbtem Leder mit matter Metallschnalle.',                              49.00,  '/images/guertel.jpg',         25),
   ('Crew Socks 3er Pack',        'Accessoires',      'Drei Paar Socken aus Baumwollmischung mit verstärkter Ferse.',                                  19.00,  '/images/socks.jpg',           60);
-
-  CREATE TABLE IF NOT EXISTS orders (
-  id             SERIAL PRIMARY KEY,
-  customer_name  VARCHAR(100) NOT NULL,
-  customer_email VARCHAR(255) NOT NULL,
-  total          NUMERIC(10,2) NOT NULL,
-  created_at     TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS order_items (
-  id          SERIAL PRIMARY KEY,
-  order_id    INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  product_id  INTEGER NOT NULL REFERENCES products(id),
-  quantity    INTEGER NOT NULL CHECK (quantity > 0),
-  unit_price  NUMERIC(10,2) NOT NULL
-);
 -- ============================================
 -- Users (customers): created automatically at checkout, one per e-mail
 -- ============================================
