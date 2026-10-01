@@ -8,4 +8,4 @@ School project: a simple webshop (product catalog, cart, checkout) running in Do
 - xenomorpha
 
 ## How to run
-Coming soon: `docker-compose up`
+`docker-compose up`

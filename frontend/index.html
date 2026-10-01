@@ -44,18 +44,25 @@
           card.className = 'product';
           card.href = 'product.html?id=' + p.id;
 
+          const wrap = document.createElement('div');
+          wrap.className = 'product-img-wrap';
           const img = document.createElement('img');
           img.src = p.image_url;
           img.alt = p.name;
+          img.loading = 'lazy';
           img.onerror = () => { img.style.visibility = 'hidden'; };
+          wrap.append(img);
 
+          const info = document.createElement('div');
+          info.className = 'product-info';
           const name = document.createElement('h3');
           name.textContent = p.name;
-
-          const price = document.createElement('strong');
+          const price = document.createElement('span');
+          price.className = 'price';
           price.textContent = formatPrice(p.price);
+          info.append(name, price);
 
-          card.append(img, name, price);
+          card.append(wrap, info);
           container.append(card);
         }
       } catch (err) {
