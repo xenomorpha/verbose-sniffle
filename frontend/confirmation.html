@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de-CH">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Danke</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danke – webshop göffel.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="header-nav">
-  <a href="profile.html" class="profile-link">Profil</a>
-  <a href="cart.html" class="cart">Warenkorb (<span id="cart-counter">0</span>)</a>
-</nav>
-  <main class="products-section">
+
+  <header class="header">
+    <a href="/" class="logo">webshop göffel.</a>
+    <nav class="header-nav">
+      <a href="profile.html" class="profile-link">Profil</a>
+      <a href="cart.html" class="cart">Warenkorb (<span id="cart-counter">0</span>)</a>
+    </nav>
+  </header>
+
+  <main class="confirmation-page">
+    <p class="hero-label">Bestellung erhalten</p>
     <h1>Danke für deine Bestellung!</h1>
-    <p id="msg"></p>
-    <p><a href="index.html">Weiter einkaufen</a></p>
+    <p class="confirmation-text">
+      Deine Bestellnummer: <strong id="order-number">–</strong><br>
+      Den Status deiner Bestellung findest du jederzeit in deinem Profil.
+    </p>
+    <div class="confirmation-actions">
+      <a href="profile.html" class="checkout-button">Bestellstatus ansehen</a>
+      <a href="/" class="confirmation-link">Weiter einkaufen</a>
+    </div>
   </main>
+
+  <script src="cart.js"></script>
   <script>
-    const id = new URLSearchParams(location.search).get('order');
-    document.getElementById('msg').textContent = id ? 'Deine Bestellnummer: #' + id : '';
+    const orderId = new URLSearchParams(window.location.search).get("order");
+    if (orderId) {
+      document.getElementById("order-number").textContent = "#" + orderId;
+    }
   </script>
 </body>
 </html>
