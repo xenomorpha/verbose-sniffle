@@ -76,8 +76,14 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
 }.product { border: 1px solid #ddd; padding: 12px; border-radius: 8px; }
-.product img { max-width: 100%; }
-.add-to-cart {
+.product img {
+  width: 100%;
+  aspect-ratio: 3 / 4;     /* same shape for every image */
+  object-fit: cover;       /* crop to fill, no stretching */
+  background: #eee;        /* grey box while loading */
+  border-radius: 6px;
+  display: block;
+}.add-to-cart {
   margin-top: 12px; width: 100%;
   font-family: inherit; font-weight: 600;
   padding: 10px; border: none; border-radius: 999px;
