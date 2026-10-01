@@ -40,29 +40,22 @@
 
         container.innerHTML = '';
         for (const p of products) {
-          const card = document.createElement('div');
+          const card = document.createElement('a');
           card.className = 'product';
+          card.href = 'product.html?id=' + p.id;
 
           const img = document.createElement('img');
           img.src = p.image_url;
           img.alt = p.name;
-          img.onerror = () => img.remove();   // hide broken images for now
+          img.onerror = () => { img.style.visibility = 'hidden'; };
 
           const name = document.createElement('h3');
           name.textContent = p.name;
 
-          const desc = document.createElement('p');
-          desc.textContent = p.description;
-
           const price = document.createElement('strong');
           price.textContent = formatPrice(p.price);
 
-          const btn = document.createElement('button');
-          btn.textContent = 'In den Warenkorb';
-          btn.className = 'add-to-cart';
-          btn.addEventListener('click', () => addToCart(p));
-
-          card.append(img, name, desc, price, btn);
+          card.append(img, name, price);
           container.append(card);
         }
       } catch (err) {
